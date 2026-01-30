@@ -32,11 +32,13 @@
       width: 50px;
     }
 
-    input[type="range"] {
-      writing-mode: bt-lr; /* vertical */
+    /* Vertical slider styles */
+    #playerSlider {
       -webkit-appearance: slider-vertical;
-      height: 300px;
+      writing-mode: bt-lr; /* vertical */
       width: 20px;
+      height: 300px;
+      background: #ffd6e8;
       margin-left: 10px;
     }
 
@@ -109,6 +111,7 @@
       display: none;
       margin-top: 20px;
       position: relative;
+      height: 300px;
     }
 
     #pongCanvas {
@@ -266,7 +269,6 @@
       overlay.style.display = "none";
     }
 
-    // Countdown
     function updateCountdown() {
       const now = new Date();
       const day = now.getDay();
@@ -296,7 +298,7 @@
 
     function startPong() {
       pongContainer.style.display = "block";
-      playerY = canvas.height / 2 - 30;
+      playerY = parseInt(slider.value);
       fredY = canvas.height / 2 - 30;
       ballX = canvas.width / 2;
       ballY = canvas.height / 2;
@@ -334,8 +336,8 @@
       // Fred collision
       if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
 
-      // Move Fred slower with random speed
-      const fredSpeed = 0.5 + Math.random() * 1.5; // 0.5-2 px
+      // Fred automatic movement, slower random
+      const fredSpeed = 0.5 + Math.random() * 1.2; 
       if (fredY + 30 < ballY) fredY += fredSpeed;
       if (fredY + 30 > ballY) fredY -= fredSpeed;
 
@@ -369,7 +371,10 @@
 
     // Vertical slider controls
     slider.addEventListener("input", () => {
-      playerY = parseInt(slider.value);
+      let val = parseInt(slider.value);
+      if (val < 0) val = 0;
+      if (val > canvas.height - 60) val = canvas.height - 60;
+      playerY = val;
     });
 
     function endPong() {
