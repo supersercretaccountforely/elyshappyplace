@@ -33,8 +33,11 @@
     }
 
     input[type="range"] {
-      width: 200px;
-      margin-top: 10px;
+      writing-mode: bt-lr; /* vertical */
+      -webkit-appearance: slider-vertical;
+      height: 300px;
+      width: 20px;
+      margin-left: 10px;
     }
 
     button {
@@ -105,12 +108,23 @@
     #pongContainer {
       display: none;
       margin-top: 20px;
+      position: relative;
     }
+
     #pongCanvas {
       background: #fff0f5;
       border: 2px solid #ffd6e8;
       display: block;
       margin: 0 auto;
+    }
+
+    #sliderContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 300px;
+      display: flex;
+      align-items: center;
     }
   </style>
 </head>
@@ -142,10 +156,11 @@
 
   <!-- Pong game -->
   <div id="pongContainer">
+    <div id="sliderContainer">
+      <input type="range" id="playerSlider" min="0" max="240" value="120">
+    </div>
     <canvas id="pongCanvas" width="500" height="300"></canvas>
     <p>First to 5 wins. You vs Fred</p>
-    <input type="range" id="playerSlider" min="0" max="240" value="120">
-    <br>
     <button onclick="endPong()">Exit Game</button>
   </div>
 
@@ -164,7 +179,7 @@
       localStorage.setItem("bgColor", colorPicker.value);
     });
 
-    // First-person happy messages
+    // Happy messages
     const happyMessages = [
       "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile",
       "Cats exist, and I hope they make you happy hehe :>",
@@ -214,7 +229,6 @@
       "I love you because you’re you, I love you just the way you are"
     ];
 
-    // First-person miss-me things
     const smileThings = [
       "you know your smile brightens my day",
       "the way you love me is so beautiful hehe",
@@ -230,7 +244,7 @@
       "when you tell me about your day, it makes me feel so included, and i love it. i love you ely",
       "when you tell me about your interests and your classes, i feel so connected to you!",
       "i love hearing your thoughts and opinions, it makes me feel closer to you!",
-      "i love how you always share your feelings with me, it makes me feel special and loved!",
+      "i love how you always share your feelings with me, it makes me feel special and loved!"
     ];
 
     const overlay = document.getElementById("overlay");
@@ -252,7 +266,7 @@
       overlay.style.display = "none";
     }
 
-    // Weekend countdown
+    // Countdown
     function updateCountdown() {
       const now = new Date();
       const day = now.getDay();
@@ -269,7 +283,7 @@
     updateCountdown();
     setInterval(updateCountdown, 60000);
 
-    // Ping pong game
+    // Pong
     const pongBtn = document.getElementById("pongBtn");
     const pongContainer = document.getElementById("pongContainer");
     const canvas = document.getElementById("pongCanvas");
@@ -298,12 +312,13 @@
     function animatePong() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw paddles and ball
-      ctx.fillStyle = "#ffd6e8";
+      // Draw paddles and ball (darker)
+      ctx.fillStyle = "#800000";
       ctx.fillRect(10, playerY, 10, 60);
       ctx.fillRect(canvas.width - 20, fredY, 10, 60);
       ctx.beginPath();
       ctx.arc(ballX, ballY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = "#800000";
       ctx.fill();
 
       // Move ball
@@ -319,8 +334,8 @@
       // Fred collision
       if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
 
-      // Move Fred with variable speed
-      const fredSpeed = 1 + Math.random() * 2; // 1-3 px/frame
+      // Move Fred slower with random speed
+      const fredSpeed = 0.5 + Math.random() * 1.5; // 0.5-2 px
       if (fredY + 30 < ballY) fredY += fredSpeed;
       if (fredY + 30 > ballY) fredY -= fredSpeed;
 
@@ -352,7 +367,7 @@
       ballVY = 2 * (Math.random() > 0.5 ? 1 : -1);
     }
 
-    // Player paddle via slider
+    // Vertical slider controls
     slider.addEventListener("input", () => {
       playerY = parseInt(slider.value);
     });
