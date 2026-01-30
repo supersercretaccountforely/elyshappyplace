@@ -34,7 +34,6 @@
       width: 50px;
     }
 
-    /* Vertical slider styles */
     #playerSlider {
       -webkit-appearance: slider-vertical;
       writing-mode: bt-lr;
@@ -61,7 +60,6 @@
       transform: scale(1.05);
     }
 
-    /* Tooltip hover */
     button[data-tooltip]:hover::after {
       content: attr(data-tooltip);
       position: absolute;
@@ -103,7 +101,7 @@
       height: 15px;
       background: red;
       transform: rotate(45deg);
-      animation: float 6s linear infinite;
+      animation: float 6s linear forwards;
       z-index: 0;
     }
     .heart::before,
@@ -185,7 +183,7 @@
       border-radius: 12px;
     }
 
-    /* Don’t click me text */
+    /* Don’t click me box */
     #easterEgg {
       font-size: 12px;
       color: #ff69b4;
@@ -193,6 +191,10 @@
       position: fixed;
       bottom: 5px;
       right: 5px;
+      padding: 5px 10px;
+      border: 2px dashed #ff69b4;
+      border-radius: 8px;
+      background: #fff0f5;
     }
   </style>
 </head>
@@ -250,15 +252,16 @@
       localStorage.setItem("bgColor", colorPicker.value);
     });
 
-    // Floating hearts
+    // Occasional floating hearts
     function createHeart() {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.animationDuration = (4 + Math.random() * 4) + "s";
-      heart.style.fontSize = (10 + Math.random() * 10) + "px";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 8000);
+      if (Math.random() > 0.7) { // 30% chance each interval
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 8000);
+      }
     }
     setInterval(createHeart, 500);
 
@@ -304,9 +307,7 @@
       overlay.style.display = "block";
     });
 
-    function closeOverlay() {
-      overlay.style.display = "none";
-    }
+    function closeOverlay() { overlay.style.display = "none"; }
 
     // Easter egg
     document.getElementById("easterEgg").addEventListener("click", () => {
@@ -342,6 +343,8 @@
     let playerScore, fredScore;
     let animationId;
 
+    const slider = document.getElementById("playerSlider");
+
     function startPong() {
       pongContainer.style.display = "block";
       playerY = parseInt(slider.value);
@@ -360,7 +363,7 @@
     function animatePong() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#800000"; // dark color
+      ctx.fillStyle = "#800000"; // dark color for paddles
       ctx.fillRect(10, playerY, 10, 60);
       ctx.fillRect(canvas.width - 20, fredY, 10, 60);
 
@@ -376,7 +379,7 @@
       if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
 
       // Fred moves slower and randomly
-      const fredSpeed = 0.3 + Math.random() * 1.2;
+      const fredSpeed = 0.3 + Math.random(); // slower & variable
       if (fredY + 30 < ballY) fredY += fredSpeed;
       if (fredY + 30 > ballY) fredY -= fredSpeed;
 
@@ -406,7 +409,6 @@
       ballVY = 2 * (Math.random() > 0.5 ? 1 : -1);
     }
 
-    const slider = document.getElementById("playerSlider");
     slider.addEventListener("input", () => {
       let val = parseInt(slider.value);
       if (val < 0) val = 0;
