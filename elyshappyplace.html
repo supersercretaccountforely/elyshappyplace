@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>For Ely 💛</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff7fb;
+      text-align: center;
+      padding: 60px;
+      transition: background 0.3s ease;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .color-picker {
+      margin-bottom: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    input[type="color"] {
+      border: none;
+      background: none;
+      cursor: pointer;
+      height: 35px;
+      width: 50px;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: #ffd6e8;
+      transition: transform 0.05s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 20px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    #countdown {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    /* Full screen overlay */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff7fb;
+      z-index: 1000;
+      text-align: center;
+      padding: 100px 20px;
+      box-sizing: border-box;
+    }
+
+    #overlay h2 {
+      font-size: 28px;
+      line-height: 1.6;
+    }
+
+    #overlay button {
+      margin-top: 40px;
+      background: #ffd6e8;
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="color-picker">
+    pick a background color 🎨  
+    <input type="color" id="bgColorPicker">
+  </div>
+
+  <h1>Click for something happy 💌</h1>
+  <button id="clickBtn">Click me</button>
+
+  <div id="message"></div>
+
+  <div id="countdown"></div>
+
+  <!-- Full screen overlay -->
+  <div id="overlay">
+    <h2 id="overlayMessage"></h2>
+    <button onclick="closeOverlay()">Back</button>
+  </div>
+
+  <script>
+    const messages = [
+      "It’s been a long day, but tomorrow hasn’t happened yet. You get to shape it however you want 🤍",
+      "Cats exist. That alone is a reason to smile 🐱",
+      "Look at how far you’ve come. You’ve done amazing, and you *are* doing amazing.",
+      "A wise person once said the tassel was worth the hassle… I wonder who that was 😏😏😏",
+      "You have someone who’s always proud of you (that’s me), and who always loves you (also me). I love you, and I’m proud of you 🤍",
+      "Food helps. A great meal can fix more than people admit.",
+      "There are so many songs left for you to discover. We can listen together anytime 🎶",
+      "Look around, there are 4 people in your dorm, and 1 of them is *you*. I’m sure they all think you’re amazing. I definitely do.",
+      "You have things to look forward to, blitz chess, surprises coming your way, and special days ahead 🤍",
+      "You’ve made such a positive impact on people’s lives, including mine. Your kindness really matters.",
+      "Have you ever seen a baby pig? They’re ridiculously cute 🐷",
+      "Go look at the rose in the box. That’s there to make you smile, because you deserve it 🌹",
+      "Your smile is genuinely one of the most beautiful things in the universe.",
+      "Chocolate is scientifically proven to improve moods. This is real science 🍫",
+      "I could list reasons I love you forever, but here’s one: you’re you, and that’s already perfect 🤍",
+      "You deserve to smile today.",
+      "I’m proud of you, always.",
+      "You make my world brighter just by existing.",
+      "Your kindness means more than you realize.",
+      "You made me happy just by being you.",
+      "I love how caring and thoughtful you are.",
+      "You’ve come so far, and I admire you.",
+      "You matter more than you think.",
+      "Your smile is my favorite.",
+      "I’m lucky to have you in my life!"
+    ];
+
+    const overlay = document.getElementById("overlay");
+    const overlayMessage = document.getElementById("overlayMessage");
+    const clickBtn = document.getElementById("clickBtn");
+
+    clickBtn.addEventListener("click", () => {
+      const random = Math.floor(Math.random() * messages.length);
+      overlayMessage.innerText = messages[random];
+      overlay.style.display = "block";
+    });
+
+    function closeOverlay() {
+      overlay.style.display = "none";
+    }
+
+    // Background color picker
+    const colorPicker = document.getElementById("bgColorPicker");
+    colorPicker.addEventListener("input", function() {
+      document.body.style.background = colorPicker.value;
+    });
+
+    // Weekend countdown
+    function updateCountdown() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sun, 6 = Sat
+
+      const daysUntilSaturday = (6 - day + 7) % 7;
+      const nextSaturday = new Date(now);
+      nextSaturday.setDate(now.getDate() + daysUntilSaturday);
+      nextSaturday.setHours(0, 0, 0, 0);
+
+      const diff = nextSaturday - now;
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+      document.getElementById("countdown").innerText =
+        `Weekend in ${hours}h ${minutes}m ✨`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+  </script>
+
+</body>
+</html>
