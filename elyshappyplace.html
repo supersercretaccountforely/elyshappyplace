@@ -95,24 +95,38 @@
       border: none;
       cursor: pointer;
     }
+
+    /* Ping pong game */
+    #pongContainer {
+      display: none;
+      margin-top: 20px;
+    }
+    #pongCanvas {
+      background: #fff0f5;
+      border: 2px solid #ffd6e8;
+      display: block;
+      margin: 0 auto;
+    }
   </style>
 </head>
 
 <body>
 
   <div class="color-picker">
-    pick a background color 🎨  
+    pick a background color  
     <input type="color" id="bgColorPicker">
   </div>
 
-  <h1>Click for something happy 💌</h1>
+  <h1>Click for something happy</h1>
   <button id="happyBtn">Click me</button>
 
-  <h1>Click when you miss me <3</h1>
+  <h1>Click when you miss me</h1>
   <button id="missBtn">Click me</button>
 
-  <div id="message"></div>
+  <h1>Play a stress-free ping pong game</h1>
+  <button id="pongBtn">Play hockey vs me</button>
 
+  <div id="message"></div>
   <div id="countdown"></div>
 
   <!-- Full screen overlay -->
@@ -121,49 +135,60 @@
     <button onclick="closeOverlay()">Back</button>
   </div>
 
+  <!-- Pong game -->
+  <div id="pongContainer">
+    <canvas id="pongCanvas" width="500" height="300"></canvas>
+    <p>First to 5 wins. You vs Fred</p>
+    <button onclick="endPong()">Exit Game</button>
+  </div>
+
   <script>
+    // First-person happy messages
     const happyMessages = [
-      "It’s been a long day, but tomorrow hasn’t happened yet. You get to shape it however you want 🤍",
-      "Cats exist. That alone is a reason to smile",
-      "Look at how far you’ve come. You’ve done amazing, and you *are* doing amazing.",
-      "A wise person once said the tassel was worth the hassle… I wonder who that was",
-      "You have someone who’s always proud of you (that’s me), and who always loves you (also me). I love you, and I’m proud of you 🤍",
-      "Food helps. A great meal can fix more than people admit.",
-      "There are so many songs left for you to discover. We can listen together anytime",
-      "Look around, there are 4 people in your dorm, and 1 of them is *you*. I’m sure they all think you’re amazing. I definitely do.",
-      "You have things to look forward to, blitz chess, surprises coming your way, and special days ahead 🤍",
-      "You’ve made such a positive impact on people’s lives, including mine. Your kindness really matters.",
-      "Have you ever seen a baby pig? They’re ridiculously cute",
-      "Go look at the rose in the box. That’s there to make you smile, because you deserve it",
-      "Your smile is genuinely one of the most beautiful things in the universe.",
-      "Chocolate is scientifically proven to improve moods. This is real science",
-      "I could list reasons I love you forever, but here’s one: you’re you, and that’s already perfect 🤍",
-      "You deserve to smile today.",
-      "I’m proud of you, always.",
-      "You make my world brighter just by existing.",
-      "Your kindness means more than you realize.",
-      "You made me happy just by being you.",
-      "I love how caring and thoughtful you are.",
-      "You’ve come so far, and I admire you.",
-      "You matter more than you think.",
-      "Your smile is my favorite.",
-      "I’m lucky to have you in my life!"
+  "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile",
+  "Cats exist, and I hope they make you happy hehe :>",
+  "Look at how far you’ve come, you’ve done amazing! and I’m so proud of you",
+  "Someone very wise once said the tassel was worth the hassle... I wonder who said that?",
+  "I am proud of you, and I love you",
+  "Food helps, and I hope you enjoy every great meal you have",
+  "There are so many songs left for you to discover, and I can’t wait to enjoy them with you",
+  "Look around, there are people in your life who care about you, and I definitely do",
+  "You have things to look forward to, surprises coming your way, and special days ahead",
+  "You make a positive impact on people’s lives, including mine, your kindness matters",
+  "Have you ever seen a baby pig? They’re so cuteeee aaaaaaa go look hehe",
+  "I hope the rose in the box makes you smile, because you deserve it. you deserve to smile! thats from me! maybe it was the first but it wont be the last flower (hint hint)",
+  "Your smile is the most beautiful thing in the universe",
+  "GO AND EAT CHOCOLATE NOW",
+  "You are perfect just by being yourself",
+  "You deserve to smile today",
+  "I am proud of you always",
+  "You make the world brighter just by existing",
+  "Your kindness means more than you realize",
+  "You make others happy just by being you",
+  "You are caring and thoughtful",
+  "You’ve come so far, and I admire you",
+  "You matter more than you think",
+  "Your smile is my favorite",
+  "I’m lucky to have you in my life"
     ];
 
+    // First-person miss-me things
     const smileThings = [
-      "her smile :)",
-      "the way she loves me <3",
-      "the way she genuinely cares",
-      "the shared moments :3",
-      "the shared photos",
-      "our playlist",
-      "how she's busy but still has time for me",
-      "when she calls me baby",
-      "when she texts me cutely :3",
-      "when she tells me she misses me",
-      "when she updates me",
-      "when she tells me about her day",
-      "when she tells me about her interests :)"
+      "you know your smile brightens my day",
+      "the way you love me is so beautiful hehe",
+      "i love the way you genuinely care for me ely",
+      "the shared moments we have are special to me, let's create more!",
+      "i like the photos we share, they make me feel close to you! do you have any new ones?",
+      "why dont you listen to our playlist together? send me the spotify jam link if you have time :>",
+      "its beautiful how you're busy but still have time for me",
+      "when you call me baby it instantly makes me kilig btw",
+      "pls text me cutely now i miss you too",
+      "hey! you're on a website, and i miss you too!!! come and tell me hehe",
+      "i love it when you update me btw, maybe u could do that now?",
+      "when you tell me about your day, it makes me feel so included, and i love it. i love you ely",
+      "when you tell me about your interests and your classes, i feel so connected to you!",
+      "i love hearing your thoughts and opinions, it makes me feel closer to you!",
+      "i love how you always share your feelings with me, it makes me feel special and loved!",
     ];
 
     const overlay = document.getElementById("overlay");
@@ -194,25 +219,114 @@
     // Weekend countdown
     function updateCountdown() {
       const now = new Date();
-      const day = now.getDay(); // 0 = Sun, 6 = Sat
-
+      const day = now.getDay();
       const daysUntilSaturday = (6 - day + 7) % 7;
       const nextSaturday = new Date(now);
       nextSaturday.setDate(now.getDate() + daysUntilSaturday);
       nextSaturday.setHours(0, 0, 0, 0);
-
       const diff = nextSaturday - now;
-
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
-
       document.getElementById("countdown").innerText =
-        `Weekend in ${hours}h ${minutes}m ✨`;
+        `Weekend in ${hours}h ${minutes}m`;
     }
-
     updateCountdown();
     setInterval(updateCountdown, 60000);
-  </script>
 
+    // Ping pong game
+    const pongBtn = document.getElementById("pongBtn");
+    const pongContainer = document.getElementById("pongContainer");
+    const canvas = document.getElementById("pongCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let playerY, fredY, ballX, ballY, ballVX, ballVY;
+    let playerScore, fredScore;
+    let animationId;
+
+    function startPong() {
+      pongContainer.style.display = "block";
+      playerY = canvas.height / 2 - 30;
+      fredY = canvas.height / 2 - 30;
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+      ballVX = 3;
+      ballVY = 2;
+      playerScore = 0;
+      fredScore = 0;
+      animatePong();
+    }
+
+    pongBtn.addEventListener("click", startPong);
+
+    function animatePong() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw paddles
+      ctx.fillStyle = "#ffd6e8";
+      ctx.fillRect(10, playerY, 10, 60);
+      ctx.fillRect(canvas.width - 20, fredY, 10, 60);
+
+      // Draw ball
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Move ball
+      ballX += ballVX;
+      ballY += ballVY;
+
+      // Top/bottom bounce
+      if (ballY < 0 || ballY > canvas.height) ballVY *= -1;
+
+      // Player collision
+      if (ballX < 20 && ballY > playerY && ballY < playerY + 60) ballVX *= -1;
+      // Fred collision (easy to beat)
+      if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
+
+      // Move Fred automatically
+      if (fredY + 30 < ballY) fredY += 2;
+      if (fredY + 30 > ballY) fredY -= 2;
+
+      // Score
+      if (ballX < 0) { fredScore++; resetBall(); }
+      if (ballX > canvas.width) { playerScore++; resetBall(); }
+
+      // Display scores
+      ctx.fillStyle = "#000";
+      ctx.font = "16px Arial";
+      ctx.fillText("You: " + playerScore, 50, 20);
+      ctx.fillText("Fred: " + fredScore, canvas.width - 100, 20);
+
+      if (playerScore >= 5 || fredScore >= 5) {
+        ctx.fillStyle = "#000";
+        ctx.font = "20px Arial";
+        const winner = playerScore > fredScore ? "You win!" : "Fred wins!";
+        ctx.fillText(winner, canvas.width / 2 - 50, canvas.height / 2);
+        return;
+      }
+
+      animationId = requestAnimationFrame(animatePong);
+    }
+
+    function resetBall() {
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+      ballVX = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ballVY = 2 * (Math.random() > 0.5 ? 1 : -1);
+    }
+
+    // Control player paddle
+    canvas.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      playerY = e.clientY - rect.top - 30;
+      if (playerY < 0) playerY = 0;
+      if (playerY > canvas.height - 60) playerY = canvas.height - 60;
+    });
+
+    function endPong() {
+      pongContainer.style.display = "none";
+      cancelAnimationFrame(animationId);
+    }
+  </script>
 </body>
 </html>
