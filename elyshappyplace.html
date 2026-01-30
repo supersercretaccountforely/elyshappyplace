@@ -11,6 +11,8 @@
       text-align: center;
       padding: 60px;
       transition: background 0.3s ease;
+      overflow-x: hidden;
+      position: relative;
     }
 
     h1 {
@@ -35,7 +37,7 @@
     /* Vertical slider styles */
     #playerSlider {
       -webkit-appearance: slider-vertical;
-      writing-mode: bt-lr; /* vertical */
+      writing-mode: bt-lr;
       width: 50px;
       height: 300px;
       background: #ffd6e8;
@@ -52,10 +54,27 @@
       background: #ffd6e8;
       transition: transform 0.05s ease, background 0.2s ease;
       margin: 5px;
+      position: relative;
     }
 
     button:hover {
       transform: scale(1.05);
+    }
+
+    /* Tooltip hover */
+    button[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffd6e8;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: 10;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
     }
 
     #message {
@@ -75,6 +94,33 @@
       transform: translateX(-50%);
       font-size: 14px;
       opacity: 0.75;
+    }
+
+    /* Hearts */
+    .heart {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      transform: rotate(45deg);
+      animation: float 6s linear infinite;
+      z-index: 0;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      border-radius: 50%;
+    }
+    .heart::before { top: -7.5px; left: 0; }
+    .heart::after { left: -7.5px; top: 0; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+      100% { transform: translateY(-500px) rotate(45deg); opacity: 0; }
     }
 
     /* Full screen overlay */
@@ -107,7 +153,7 @@
       cursor: pointer;
     }
 
-    /* Ping pong game */
+    /* Pong game */
     #pongContainer {
       display: none;
       margin-top: 20px;
@@ -124,11 +170,29 @@
 
     #sliderContainer {
       position: absolute;
-      left: -60px; /* outside the canvas slightly */
+      left: -60px;
       top: 0;
       height: 300px;
       display: flex;
       align-items: center;
+    }
+
+    /* Easter egg image */
+    #catImg {
+      display: none;
+      max-width: 300px;
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+
+    /* Don’t click me text */
+    #easterEgg {
+      font-size: 12px;
+      color: #ff69b4;
+      cursor: pointer;
+      position: fixed;
+      bottom: 5px;
+      right: 5px;
     }
   </style>
 </head>
@@ -141,16 +205,20 @@
   </div>
 
   <h1>Click for something happy</h1>
-  <button id="happyBtn">Click me</button>
+  <button id="happyBtn" data-tooltip="Click to see a happy message!">Click me</button>
 
   <h1>Click when you miss me</h1>
-  <button id="missBtn">Click me</button>
+  <button id="missBtn" data-tooltip="Click to see why I love you!">Click me</button>
 
   <h1>Play a stress-free ping pong game</h1>
-  <button id="pongBtn">Play hockey vs me</button>
+  <button id="pongBtn" data-tooltip="Play table hockey vs me!">Play hockey vs me</button>
 
   <div id="message"></div>
   <div id="countdown"></div>
+
+  <!-- Easter egg -->
+  <div id="easterEgg">don't click me</div>
+  <img id="catImg" src="forely.jpg" alt="I love you">
 
   <!-- Full screen overlay -->
   <div id="overlay">
@@ -177,60 +245,35 @@
       body.style.background = savedColor;
       colorPicker.value = savedColor;
     }
-
     colorPicker.addEventListener("input", function() {
       body.style.background = colorPicker.value;
       localStorage.setItem("bgColor", colorPicker.value);
     });
 
-    // Happy messages
+    // Floating hearts
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+      heart.style.fontSize = (10 + Math.random() * 10) + "px";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    }
+    setInterval(createHeart, 500);
+
+    // Happy and miss messages
     const happyMessages = [
-      "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile for a new day!",
+      "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile",
       "Cats exist, and I hope they make you happy hehe :>",
       "Look at how far you’ve come, you’ve done amazing! and I’m so proud of you",
-      "Someone very wise once said the tassle was worth the hassle... I wonder who said that?",
-      "I am proud of you, and I love you so much",
-      "Food helps, and I hope you have something yummy to eat soon",
-      "There are so many songs left for you to discover, and I can’t wait to enjoy them with you!",
-      "Look around, there are people in your life who care about you, and I definitely do, and i definitely love you, and i definitely will always love you and care about you hehe :3",
+      "Someone very wise once said the tassel was worth the hassle... I wonder who said that?",
+      "I am proud of you, and I love you",
+      "Food helps, and I hope you enjoy every great meal you have",
+      "There are so many songs left for you to discover, and I can’t wait to enjoy them with you",
+      "Look around, there are people in your life who care about you, and I definitely do",
       "You have things to look forward to, surprises coming your way, and special days ahead",
-      "You make a positive impact on people’s lives, including mine, your kindness matters",
-      "Have you ever seen a baby pig? They’re so cuteeee aaaaaaa go look hehe",
-      "I hope the rose in the box makes you smile, because you deserve it. you deserve to smile! thats from me! maybe it was the first but it wont be the last flower (hint hint)",
-      "Your smile is the most beautiful thing in the universe",
-      "GO AND EAT CHOCOLATE NOW",
-      "You are perfect just by being yourself",
-      "You deserve to smile today",
-      "I am proud of you, always, palagi",
-      "You make the world brighter just by existing",
-      "Your kindness means more than you realize, its beautiful",
-      "You make others happy just by being you (especially me!)",
-      "You are caring and thoughtful!!!",
-      "You’ve come so far, and I admire you so much",
-      "You matter so much to me, more than you will ever realize",
-      "Your smile is my favorite thing EVER!!!",
-      "I’m lucky to have you in my life!",
-      "I love you because you make me feel understood",
-      "I love you because your smile brightens my day",
-      "I love you because you care about the little things",
-      "I love you because you always make time for me",
-      "I love you because your laugh is contagious",
-      "I love you because you support me without judgment",
-      "I love you because you make ordinary moments special",
-      "I love you because you inspire me to be better",
-      "I love you because you listen when I need to talk",
-      "I love you because your kindness touches everyone around you",
-      "I love you because you’re thoughtful in ways I don’t even notice at first",
-      "I love you because you make me feel safe and happy",
-      "I love you because your hugs feel like home",
-      "I love you because you’re genuine and true to yourself",
-      "I love you because you can make me laugh even on bad days",
-      "I love you because you share your world with me",
-      "I love you because you notice and appreciate the small things",
-      "I love you because your heart is so big and warm",
-      "I love you because you make me feel loved just by being you",
-      "I love you because life feels brighter when we’re together",
-      "I love you because you’re you, I love you just the way you are"
+      "You make a positive impact on people’s lives, including mine, your kindness matters"
     ];
 
     const smileThings = [
@@ -238,17 +281,12 @@
       "the way you love me is so beautiful hehe",
       "i love the way you genuinely care for me ely",
       "the shared moments we have are special to me, let's create more!",
-      "i like the photos we share, they make me feel close to you! do you have any new ones?",
+      "i like the photos we share, they make me feel close to you!",
       "why dont you listen to our playlist together? send me the spotify jam link if you have time :>",
       "its beautiful how you're busy but still have time for me",
       "when you call me baby it instantly makes me kilig btw",
       "pls text me cutely now i miss you too",
-      "hey! you're on a website, and i miss you too!!! come and tell me hehe",
-      "i love it when you update me btw, maybe u could do that now?",
-      "when you tell me about your day, it makes me feel so included, and i love it. i love you ely",
-      "when you tell me about your interests and your classes, i feel so connected to you!",
-      "i love hearing your thoughts and opinions, it makes me feel closer to you!",
-      "i love how you always share your feelings with me, it makes me feel special and loved!"
+      "hey! you're on a website, and i miss you too!!! come and tell me hehe"
     ];
 
     const overlay = document.getElementById("overlay");
@@ -270,6 +308,14 @@
       overlay.style.display = "none";
     }
 
+    // Easter egg
+    document.getElementById("easterEgg").addEventListener("click", () => {
+      if (confirm("Are you sure?!?!")) {
+        document.getElementById("catImg").style.display = "block";
+      }
+    });
+
+    // Countdown
     function updateCountdown() {
       const now = new Date();
       const day = now.getDay();
@@ -286,7 +332,7 @@
     updateCountdown();
     setInterval(updateCountdown, 60000);
 
-    // Pong
+    // Pong game
     const pongBtn = document.getElementById("pongBtn");
     const pongContainer = document.getElementById("pongContainer");
     const canvas = document.getElementById("pongCanvas");
@@ -314,38 +360,29 @@
     function animatePong() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw paddles and ball (darker)
-      ctx.fillStyle = "#800000";
+      ctx.fillStyle = "#800000"; // dark color
       ctx.fillRect(10, playerY, 10, 60);
       ctx.fillRect(canvas.width - 20, fredY, 10, 60);
+
       ctx.beginPath();
       ctx.arc(ballX, ballY, 7, 0, Math.PI * 2);
-      ctx.fillStyle = "#800000";
       ctx.fill();
 
-      // Move ball
       ballX += ballVX;
       ballY += ballVY;
 
-      // Top/bottom bounce
       if (ballY < 0 || ballY > canvas.height) ballVY *= -1;
-
-      // Player collision
       if (ballX < 20 && ballY > playerY && ballY < playerY + 60) ballVX *= -1;
-
-      // Fred collision
       if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
 
-      // Fred automatic movement, slower random
-      const fredSpeed = 0.5 + Math.random() * 1.2;
+      // Fred moves slower and randomly
+      const fredSpeed = 0.3 + Math.random() * 1.2;
       if (fredY + 30 < ballY) fredY += fredSpeed;
       if (fredY + 30 > ballY) fredY -= fredSpeed;
 
-      // Score
       if (ballX < 0) { fredScore++; resetBall(); }
       if (ballX > canvas.width) { playerScore++; resetBall(); }
 
-      // Display scores
       ctx.fillStyle = "#000";
       ctx.font = "16px Arial";
       ctx.fillText("You: " + playerScore, 50, 20);
@@ -369,7 +406,6 @@
       ballVY = 2 * (Math.random() > 0.5 ? 1 : -1);
     }
 
-    // Slider controls for both desktop/mouse and mobile
     const slider = document.getElementById("playerSlider");
     slider.addEventListener("input", () => {
       let val = parseInt(slider.value);
