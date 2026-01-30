@@ -36,10 +36,11 @@
     #playerSlider {
       -webkit-appearance: slider-vertical;
       writing-mode: bt-lr; /* vertical */
-      width: 20px;
+      width: 50px;
       height: 300px;
       background: #ffd6e8;
       margin-left: 10px;
+      border-radius: 12px;
     }
 
     button {
@@ -123,7 +124,7 @@
 
     #sliderContainer {
       position: absolute;
-      left: 0;
+      left: -60px; /* outside the canvas slightly */
       top: 0;
       height: 300px;
       display: flex;
@@ -184,14 +185,14 @@
 
     // Happy messages
     const happyMessages = [
-      "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile",
+      "It’s been a long day, but tomorrow hasn’t happened yet, and I’m excited to see you smile for a new day!",
       "Cats exist, and I hope they make you happy hehe :>",
       "Look at how far you’ve come, you’ve done amazing! and I’m so proud of you",
-      "Someone very wise once said the tassel was worth the hassle... I wonder who said that?",
-      "I am proud of you, and I love you",
-      "Food helps, and I hope you enjoy every great meal you have",
-      "There are so many songs left for you to discover, and I can’t wait to enjoy them with you",
-      "Look around, there are people in your life who care about you, and I definitely do",
+      "Someone very wise once said the tassle was worth the hassle... I wonder who said that?",
+      "I am proud of you, and I love you so much",
+      "Food helps, and I hope you have something yummy to eat soon",
+      "There are so many songs left for you to discover, and I can’t wait to enjoy them with you!",
+      "Look around, there are people in your life who care about you, and I definitely do, and i definitely love you, and i definitely will always love you and care about you hehe :3",
       "You have things to look forward to, surprises coming your way, and special days ahead",
       "You make a positive impact on people’s lives, including mine, your kindness matters",
       "Have you ever seen a baby pig? They’re so cuteeee aaaaaaa go look hehe",
@@ -200,15 +201,15 @@
       "GO AND EAT CHOCOLATE NOW",
       "You are perfect just by being yourself",
       "You deserve to smile today",
-      "I am proud of you always",
+      "I am proud of you, always, palagi",
       "You make the world brighter just by existing",
-      "Your kindness means more than you realize",
-      "You make others happy just by being you",
-      "You are caring and thoughtful",
-      "You’ve come so far, and I admire you",
-      "You matter more than you think",
-      "Your smile is my favorite",
-      "I’m lucky to have you in my life",
+      "Your kindness means more than you realize, its beautiful",
+      "You make others happy just by being you (especially me!)",
+      "You are caring and thoughtful!!!",
+      "You’ve come so far, and I admire you so much",
+      "You matter so much to me, more than you will ever realize",
+      "Your smile is my favorite thing EVER!!!",
+      "I’m lucky to have you in my life!",
       "I love you because you make me feel understood",
       "I love you because your smile brightens my day",
       "I love you because you care about the little things",
@@ -290,7 +291,6 @@
     const pongContainer = document.getElementById("pongContainer");
     const canvas = document.getElementById("pongCanvas");
     const ctx = canvas.getContext("2d");
-    const slider = document.getElementById("playerSlider");
 
     let playerY, fredY, ballX, ballY, ballVX, ballVY;
     let playerScore, fredScore;
@@ -337,7 +337,7 @@
       if (ballX > canvas.width - 20 && ballY > fredY && ballY < fredY + 60) ballVX *= -1;
 
       // Fred automatic movement, slower random
-      const fredSpeed = 0.5 + Math.random() * 1.2; 
+      const fredSpeed = 0.5 + Math.random() * 1.2;
       if (fredY + 30 < ballY) fredY += fredSpeed;
       if (fredY + 30 > ballY) fredY -= fredSpeed;
 
@@ -369,7 +369,8 @@
       ballVY = 2 * (Math.random() > 0.5 ? 1 : -1);
     }
 
-    // Vertical slider controls
+    // Slider controls for both desktop/mouse and mobile
+    const slider = document.getElementById("playerSlider");
     slider.addEventListener("input", () => {
       let val = parseInt(slider.value);
       if (val < 0) val = 0;
