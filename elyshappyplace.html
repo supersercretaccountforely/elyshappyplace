@@ -40,6 +40,7 @@
       cursor: pointer;
       background: #ffd6e8;
       transition: transform 0.05s ease, background 0.2s ease;
+      margin: 5px;
     }
 
     button:hover {
@@ -105,7 +106,10 @@
   </div>
 
   <h1>Click for something happy 💌</h1>
-  <button id="clickBtn">Click me</button>
+  <button id="happyBtn">Click me</button>
+
+  <h1>Click when you miss me <3</h1>
+  <button id="missBtn">Click me</button>
 
   <div id="message"></div>
 
@@ -118,21 +122,21 @@
   </div>
 
   <script>
-    const messages = [
+    const happyMessages = [
       "It’s been a long day, but tomorrow hasn’t happened yet. You get to shape it however you want 🤍",
-      "Cats exist. That alone is a reason to smile 🐱",
+      "Cats exist. That alone is a reason to smile",
       "Look at how far you’ve come. You’ve done amazing, and you *are* doing amazing.",
-      "A wise person once said the tassel was worth the hassle… I wonder who that was 😏😏😏",
+      "A wise person once said the tassel was worth the hassle… I wonder who that was",
       "You have someone who’s always proud of you (that’s me), and who always loves you (also me). I love you, and I’m proud of you 🤍",
       "Food helps. A great meal can fix more than people admit.",
-      "There are so many songs left for you to discover. We can listen together anytime 🎶",
+      "There are so many songs left for you to discover. We can listen together anytime",
       "Look around, there are 4 people in your dorm, and 1 of them is *you*. I’m sure they all think you’re amazing. I definitely do.",
       "You have things to look forward to, blitz chess, surprises coming your way, and special days ahead 🤍",
       "You’ve made such a positive impact on people’s lives, including mine. Your kindness really matters.",
-      "Have you ever seen a baby pig? They’re ridiculously cute 🐷",
-      "Go look at the rose in the box. That’s there to make you smile, because you deserve it 🌹",
+      "Have you ever seen a baby pig? They’re ridiculously cute",
+      "Go look at the rose in the box. That’s there to make you smile, because you deserve it",
       "Your smile is genuinely one of the most beautiful things in the universe.",
-      "Chocolate is scientifically proven to improve moods. This is real science 🍫",
+      "Chocolate is scientifically proven to improve moods. This is real science",
       "I could list reasons I love you forever, but here’s one: you’re you, and that’s already perfect 🤍",
       "You deserve to smile today.",
       "I’m proud of you, always.",
@@ -146,13 +150,34 @@
       "I’m lucky to have you in my life!"
     ];
 
+    const smileThings = [
+      "her smile :)",
+      "the way she loves me <3",
+      "the way she genuinely cares",
+      "the shared moments :3",
+      "the shared photos",
+      "our playlist",
+      "how she's busy but still has time for me",
+      "when she calls me baby",
+      "when she texts me cutely :3",
+      "when she tells me she misses me",
+      "when she updates me",
+      "when she tells me about her day",
+      "when she tells me about her interests :)"
+    ];
+
     const overlay = document.getElementById("overlay");
     const overlayMessage = document.getElementById("overlayMessage");
-    const clickBtn = document.getElementById("clickBtn");
 
-    clickBtn.addEventListener("click", () => {
-      const random = Math.floor(Math.random() * messages.length);
-      overlayMessage.innerText = messages[random];
+    document.getElementById("happyBtn").addEventListener("click", () => {
+      const random = Math.floor(Math.random() * happyMessages.length);
+      overlayMessage.innerText = happyMessages[random];
+      overlay.style.display = "block";
+    });
+
+    document.getElementById("missBtn").addEventListener("click", () => {
+      const random = Math.floor(Math.random() * smileThings.length);
+      overlayMessage.innerText = "I miss you too, I love you\n\n" + smileThings[random];
       overlay.style.display = "block";
     });
 
